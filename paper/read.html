@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>PowerG Paper</title>
+	</head>
+	<body>
+		<style>
+		body{
+			margin: 0;
+			background-color: rgb(51, 51, 51);
+		}
+		canvas{
+			margin-top: 20px;
+			background-color: #FFFFFF;
+		}
+		input{
+		}
+		</style>
+		<input id="files" type="file" onchange="imp()">
+		<div id="canv" style="width: 100vw;text-align: center;"></div>
+		<textarea id="text" style="display: none;"></textarea>
+		<script>
+		function imp(){
+		    var selectedFile = document.getElementById("files").files[0];//获取读取的File对象
+		    var name = selectedFile.name;//读取选中文件的文件名
+		    var size = selectedFile.size;//读取选中文件的大小
+		    // console.log("文件名："+name+"   大小："+size);
+		
+		    var reader = new FileReader();//这里是核心！！！读取操作就是由它完成的。
+		    reader.readAsText(selectedFile);//读取文件的内容
+		
+		    reader.onload = function(){
+		        // console.log(this.result);//当读取完成之后会回调这个函数，然后此时文件的内容存储到了result中。直接操作即可。
+				document.getElementById("text").value=this.result;
+				delete this.result;
+				document.getElementById("files").style.display="none";
+				load();
+			};
+		}
+		
+		let noscript=undefined;
+		let unsafetycode=undefined;
+		
+		function script(com){
+			console.log(com,com[0]+com[1]+com[2]+com[3])
+			// while(com.indexOf(';')!=-1)
+			// 	com=com.replace(';','');
+			if(com[0]+com[1]+com[2]+com[3]!="ctx["){
+				if(unsafetycode==undefined)
+					unsafetycode=confirm("重要安全警告：\n发现不安全的代码，可能会植入病毒或危害您的计算机，是否坚持执行？");
+				if(unsafetycode){
+					console.log("RunCode:",com);
+					return eval(com);
+				}
+			}
+			console.log("RunCode:",com);
+			return eval(com);
+		}
+		
+		var ctx=[]
+		function load(){
+			if(document.getElementById("text").value[0]=='s'){
+				var i=1;
+				while(document.getElementById("text").value[i]!='\n') i++;i++;
+				var height="",width="";
+				while(document.getElementById("text").value[i]!='x') {width+=document.getElementById("text").value[i];i++;}i++;
+				while(document.getElementById("text").value[i]!='\n') {height+=document.getElementById("text").value[i];i++;}i++;
+				document.getElementById("canv").innerHTML+="<canvas class='canva' width='"+width+"' height='"+height+"'></canvas><br>"
+				
+				var canvas = document.getElementsByClassName('canva');
+				var font="50px sans-serif",color="#000000";
+				while(document.getElementById("text").value[i]!=undefined){
+					var cmd={pos:[0,0,0],text:""};
+					if(document.getElementById("text").value[i]=='['){
+						i++;
+						font='';
+						while(']'!=document.getElementById("text").value[i]) {font+=document.getElementById("text").value[i];i++;}i++;
+						if(document.getElementById("text").value[i]=='\n')
+							continue;
+						color='';
+						while('\n'!=document.getElementById("text").value[i]) {color+=document.getElementById("text").value[i];i++;}i++;
+						continue;
+					}
+					if(document.getElementById("text").value[i]=='{' && !noscript){
+						i++;
+						if(noscript==undefined)
+							if(!confirm("安全警告：\n当前文件中含有代码，可能不安全，确定要执行吗？"))
+								noscript=true;
+							else
+								noscript=false;
+						if(noscript==false){
+							var command='';
+							while('}'!=document.getElementById("text").value[i]) {command+=document.getElementById("text").value[i];i++;}i++;
+							script(command);
+							continue;
+						}
+						continue;
+					}
+					while('('!=document.getElementById("text").value[i]) i++;i++;
+					while(','!=document.getElementById("text").value[i]) {cmd.pos[0]*=10;cmd.pos[0]+=Number(document.getElementById("text").value[i]);i++;}i++;
+					while(','!=document.getElementById("text").value[i]) {cmd.pos[1]*=10;cmd.pos[1]+=Number(document.getElementById("text").value[i]);i++;}i++;
+					while(')'!=document.getElementById("text").value[i]) {cmd.pos[2]*=10;cmd.pos[2]+=Number(document.getElementById("text").value[i]);i++;}i++;
+					while('\n'!=document.getElementById("text").value[i]) {cmd.text+=document.getElementById("text").value[i];i++;}i++;
+					
+					while(canvas[cmd.pos[0]-1]==undefined){
+						var canvasList = document.getElementById('canv');
+						var nw = document.createElement('canvas');
+						canvasList.appendChild(nw);
+						nw.width = width; //☜
+						nw.height = height;
+						nw.className="canva";
+						// nw.style.textAlign="center"
+						nw = document.createElement('br');
+						canvasList.appendChild(nw);
+					}
+					
+					ctx[cmd.pos[0]-1] = canvas[cmd.pos[0]-1].getContext("2d");
+					ctx[cmd.pos[0]-1].font = font;
+					ctx[cmd.pos[0]-1].fillStyle=color;
+					ctx[cmd.pos[0]-1].fillText(cmd.text, cmd.pos[1], cmd.pos[2]);
+					console.log(canvas[cmd.pos[0]-1]);
+					// break;
+				}
+				console.log(ctx)
+			}
+		}
+		</script>
+	</body>
+</html>
