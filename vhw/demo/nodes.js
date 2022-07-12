@@ -16,4 +16,10 @@ window.TEST_NODES = [{
     username: 'not',
     desc: 'Logical operation',
 	note: 'NOT (Logical operation)'
+}, {
+    name: 'xor',
+    procId: '3',
+    username: 'xor',
+    desc: 'Logical operation',
+	note: 'XOR (Logical operation)'
 }];

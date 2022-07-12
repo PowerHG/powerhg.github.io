@@ -3,6 +3,7 @@ output = []
 and = []
 or = []
 not = []
+xor = []
 table = []
 
 run = 0;
@@ -112,6 +113,12 @@ function btn_run() {
 				'source': x.source,
 				'target': x.target
 			});
+		if (x.name == "xor")
+			xor.push({
+				'id': x.nodeId,
+				'source': x.source,
+				'target': x.target
+			});
 	}
 
 	reRun();
@@ -139,6 +146,13 @@ function logic(opr,li){
 	}
 	if(opr=='not'){
 		return !logic('or',li);
+	}
+	if(opr=='xor'){
+		flag=0
+		for(x in li){
+			if(li[x])	flag++;
+		}
+		return (flag==1);
 	}
 }
 
@@ -173,6 +187,12 @@ function reRun() {
 			'out': undefined
 		}
 	})
+	xor.forEach(node => {
+		runtime[node.id] = {
+			'in': Array.from(node.target),
+			'out': undefined
+		}
+	})
 	
 	function runNode(id){
 		for(var i=0;i<runtime[id].in.length;i++){
@@ -190,6 +210,8 @@ function reRun() {
 			runtime[id].out=logic('and',runtime[id].in);
 		if(table[id].name=='not')
 			runtime[id].out=logic('not',runtime[id].in);
+		if(table[id].name=='xor')
+			runtime[id].out=logic('xor',runtime[id].in);
 	}
 	output.forEach(node => {
 		// console.log(node.target)
