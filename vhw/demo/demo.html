@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Virtual HardWare</title>
+		<link rel="Shortcut Icon" href="../icon.ico" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="../chart.css">
+		<script src="../libs/jquery.min.js"></script>
+		<script src="../libs/jsPlumb.min.js"></script>
+		<script src='../chart.js'></script>
+		<!-- 模拟测试数据 -->
+		<script src="./nodes.js"></script>
+		<script src="./demo.js"></script>
+		<script src="./kernel.js"></script>
+		<script src="./file.js"></script>
+		<link rel="stylesheet" href="demo.css">
+	</head>
+
+	<body>
+		<div class='flowchart-panel'>
+			<div class='left' style="z-index: 1;">
+				<h3>Library</h3>
+				<input type="text" name="keyword">
+				<ul class='nodes'>
+				</ul>
+			</div>
+			<div class='middle'>
+				<div id="demo-chart">
+					<!--                <div class="startpoint point window node" style="left: 150px; top:20px; background-color:green" data-nodetype="startpoint" id="startpoint">Start</div>
+                <div class="endpoint point window node" style="left: 150px; top:350px" data-nodetype="endpoint" id="endpoint">End</div> -->
+				</div>
+			</div>
+			<div class='right'>
+				<h3 class='proc-name'></h3>
+				<p class='proc-desc'></p>
+				<!-- <button class='btn-del'>删除</button> -->
+			</div>
+		</div>
+		<div class='btns'>
+			<button class='btn-save-show' onclick="btn_save();">Save</button>
+			<button class='btn-load-show'><span onclick="$('#file').click()" id="span_of_file">Load</span><input style="display: none;" type="file" onchange="$('#span_of_file').text('Load: '+this.files[0].name);imp();" id="file"></button>
+			<button class='btn-clear'>Clear</button>
+			<button class='btn-run' onclick="btn_run();">Run</button>
+
+			<button class='btn-save' style="display: none;">保存</button>
+			<button class='btn-load' style="display: none;">载入</button>
+		</div>
+		<textarea id="jsonOutput" style="display: none;"></textarea>
+
+
+	</body>
+
+</html>
