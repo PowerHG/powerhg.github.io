@@ -221,7 +221,7 @@ function reRun() {
 		}
 		for(var i=0;i<runtime[node.id].in.length;i++){
 			var x=runtime[node.id].in[i];
-			console.log(x, runtime[x].out)
+			// console.log(x, runtime[x].out)
 			if(runtime[x].out!=undefined){
 				runtime[node.id].in[i]=runtime[x].out
 			}else{

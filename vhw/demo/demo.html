@@ -5,6 +5,21 @@
 		<title>Virtual HardWare</title>
 		<link rel="Shortcut Icon" href="../icon.ico" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="../chart.css">
+		<link rel="stylesheet" href="demo.css">
+		<style>
+			@media print {
+				body {
+					-webkit-print-color-adjust: exact;
+					-moz-print-color-adjust: exact;
+					-ms-print-color-adjust: exact;
+					print-color-adjust: exact;
+				}
+
+				@page {
+					size: landscape;
+				}
+			}
+		</style>
 		<script src="../libs/jquery.min.js"></script>
 		<script src="../libs/jsPlumb.min.js"></script>
 		<script src='../chart.js'></script>
@@ -13,7 +28,7 @@
 		<script src="./demo.js"></script>
 		<script src="./kernel.js"></script>
 		<script src="./file.js"></script>
-		<link rel="stylesheet" href="demo.css">
+
 	</head>
 
 	<body>
@@ -36,18 +51,35 @@
 				<!-- <button class='btn-del'>删除</button> -->
 			</div>
 		</div>
+		<div class="footer" style="display: none;text-align: center;"><img src="../icon.ico" style="max-width: 15px;"> Virtual HardWare</div>
 		<div class='btns'>
 			<button class='btn-save-show' onclick="btn_save();">Save</button>
-			<button class='btn-load-show'><span onclick="$('#file').click()" id="span_of_file">Load</span><input style="display: none;" type="file" onchange="$('#span_of_file').text('Load: '+this.files[0].name);imp();" id="file"></button>
+			<button class='btn-load-show'><span onclick="$('#file').click()" id="span_of_file">Load</span><input
+					style="display: none;" type="file"
+					onchange="$('#span_of_file').text('Load: '+this.files[0].name);imp();" id="file"></button>
 			<button class='btn-clear'>Clear</button>
 			<button class='btn-run' onclick="btn_run();">Run</button>
+			<button class='btn-pt' onclick='PtScr()'>PtScreen</button>
 
-			<button class='btn-save' style="display: none;">保存</button>
-			<button class='btn-load' style="display: none;">载入</button>
+			<button class='btn-save' style="display: none;">S</button>
+			<button class='btn-load' style="display: none;">L</button>
 		</div>
+
 		<textarea id="jsonOutput" style="display: none;"></textarea>
 
-
+		<script>
+			function PtScr() {
+				$(".right").css("display", "none");
+				$(".left").css("display", "none");
+				$(".btns").css("display", "none");
+				$(".footer").css("display", "block");
+				window.print();
+				$(".right").css("display", "block");
+				$(".left").css("display", "block");
+				$(".btns").css("display", "block");
+				$(".footer").css("display", "none");
+			}
+		</script>
 	</body>
 
 </html>
