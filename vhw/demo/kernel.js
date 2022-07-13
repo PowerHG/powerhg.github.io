@@ -5,6 +5,9 @@ or = []
 not = []
 xor = []
 table = []
+DEBUG_runtime = []
+DEBUG_time = 0
+DEBUG_state = 'off'
 
 run = 0;
 
@@ -65,7 +68,7 @@ function btn_run() {
 			var py = x.positionY;
 			var ele = document.createElement("div");
 			ele.classList = "kernel_input-btn";
-			ele.id="kernel_"+x.nodeId;
+			ele.id = "kernel_" + x.nodeId;
 			$(".middle").append(ele);
 
 			ele.style.backgroundColor = "#222";
@@ -88,7 +91,7 @@ function btn_run() {
 			var py = x.positionY;
 			var ele = document.createElement("div");
 			ele.classList = "kernel_output-btn";
-			ele.id="kernel_"+x.nodeId;
+			ele.id = "kernel_" + x.nodeId;
 			$(".middle").append(ele);
 
 			ele.style.backgroundColor = "#222";
@@ -131,38 +134,40 @@ function btn_run() {
 
 
 
-function logic(opr,li){
-	if(opr=='or'){
-		for(x in li){
-			if(li[x]) return true;
+function logic(opr, li) {
+	DEBUG_time++;
+	if (opr == 'or') {
+		for (x in li) {
+			if (li[x]) return true;
 		}
 		return false;
 	}
-	if(opr=='and'){
-		for(x in li){
-			if(!li[x]) return false;
+	if (opr == 'and') {
+		for (x in li) {
+			if (!li[x]) return false;
 		}
 		return true;
 	}
-	if(opr=='not'){
-		return !logic('or',li);
+	if (opr == 'not') {
+		return !logic('or', li);
 	}
-	if(opr=='xor'){
-		flag=0
-		for(x in li){
-			if(li[x])	flag++;
+	if (opr == 'xor') {
+		flag = 0
+		for (x in li) {
+			if (li[x]) flag++;
 		}
-		return (flag==1);
+		return (flag == 1);
 	}
 }
 
 
 
 function reRun() {
+	DEBUG_time = 0;
 	var runtime = [];
-	
+
 	input.forEach(node => {
-		var ID="#kernel_"+node.id
+		var ID = "#kernel_" + node.id
 		runtime[node.id] = {
 			'in': [],
 			'out': $(ID).data().color
@@ -193,25 +198,25 @@ function reRun() {
 			'out': undefined
 		}
 	})
-	
-	function runNode(id){
-		for(var i=0;i<runtime[id].in.length;i++){
-			var x=runtime[id].in[i];
-			if(runtime[x].out!=undefined){
-				runtime[id].in[i]=runtime[x].out;
-			}else{
+
+	function runNode(id) {
+		for (var i = 0; i < runtime[id].in.length; i++) {
+			var x = runtime[id].in[i];
+			if (runtime[x].out != undefined) {
+				runtime[id].in[i] = runtime[x].out;
+			} else {
 				runNode(x);
-				runtime[id].in[i]=runtime[x].out;
+				runtime[id].in[i] = runtime[x].out;
 			}
 		}
-		if(table[id].name=='or')
-			runtime[id].out=logic('or',runtime[id].in);
-		if(table[id].name=='and')
-			runtime[id].out=logic('and',runtime[id].in);
-		if(table[id].name=='not')
-			runtime[id].out=logic('not',runtime[id].in);
-		if(table[id].name=='xor')
-			runtime[id].out=logic('xor',runtime[id].in);
+		if (table[id].name == 'or')
+			runtime[id].out = logic('or', runtime[id].in);
+		if (table[id].name == 'and')
+			runtime[id].out = logic('and', runtime[id].in);
+		if (table[id].name == 'not')
+			runtime[id].out = logic('not', runtime[id].in);
+		if (table[id].name == 'xor')
+			runtime[id].out = logic('xor', runtime[id].in);
 	}
 	output.forEach(node => {
 		// console.log(node.target)
@@ -219,19 +224,31 @@ function reRun() {
 			'in': Array.from(node.target),
 			'out': undefined
 		}
-		for(var i=0;i<runtime[node.id].in.length;i++){
-			var x=runtime[node.id].in[i];
+		for (var i = 0; i < runtime[node.id].in.length; i++) {
+			var x = runtime[node.id].in[i];
 			// console.log(x, runtime[x].out)
-			if(runtime[x].out!=undefined){
-				runtime[node.id].in[i]=runtime[x].out
-			}else{
+			if (runtime[x].out != undefined) {
+				runtime[node.id].in[i] = runtime[x].out
+			} else {
 				runNode(x);
-				runtime[node.id].in[i]=runtime[x].out;
+				runtime[node.id].in[i] = runtime[x].out;
 			}
 		}
-		var ID="#kernel_"+node.id;
-		var temp_color=(logic('or',runtime[node.id].in) ? '#FFF' : '#222')
+		var ID = "#kernel_" + node.id;
+		var temp_color = (logic('or', runtime[node.id].in) ? '#FFF' : '#222')
 		// console.log(ID, $(ID))
 		$(ID).css('backgroundColor', temp_color)
 	})
+	DEBUG_runtime = runtime;
+
+
+	$('.window.task').unbind('mouseover')
+	$('.window.task').mouseover(function() {
+		if (DEBUG_state == 'on')
+			MouseOver(this.id);
+	})
+}
+
+function MouseOver(id) {
+	$('#DEBUG_DIV').html(`<br><br><br><h3>DEBUG</h3><p>Time: ${DEBUG_time}</p><p>ID: ${id}</p><p>Output: ${DEBUG_runtime[id].out}</p><p>Input: ${DEBUG_runtime[id].in}</p>`)
 }
