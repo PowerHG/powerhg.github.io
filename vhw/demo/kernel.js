@@ -135,7 +135,7 @@ function btn_run() {
 
 
 function logic(opr, li) {
-	DEBUG_time++;
+	DEBUG_time+=li.indexOf(true)==-1?0:1;
 	if (opr == 'or') {
 		for (x in li) {
 			if (li[x]) return true;
