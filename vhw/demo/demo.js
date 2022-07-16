@@ -1,11 +1,13 @@
+GLOBAL_DATA_DESC='';
 let _showNodeInfo = (data) => {
 	if (!data) {
 		return;
 	}
 
 	let infoPanel = $('.right');
+	GLOBAL_DATA_DESC=data;
 	infoPanel.find('.proc-name').text(data.name || '');
-	infoPanel.find('.proc-desc').text(data.desc || '');
+	infoPanel.find('.proc-desc').html(data.desc || '');
 };
 
 let _hideNodeInfo = () => {
@@ -106,6 +108,10 @@ Chart.ready(() => {
 		listHtml +=
 			`<li><span data-id='node.procId' class='btn-add' style="width: 100%;">${node.note||node.name}</span><span style="display: none" class="node-name">${node.name}</span></li>`;
 	});
+	listHtml +=
+		`<a data-id='node.procId' href='javascript:AddNote()' style='color: #5af; text-decoration: none;'><li><span class='node-name'>Notes</span></li></a>`;
+	
+	
 	$('.nodes').html(listHtml);
 	$('.nodes').find('.btn-add').each(function(index) {
 		$(this).data('node', $.extend({}, TEST_NODES[index]));
@@ -146,5 +152,16 @@ function AddEnd() {
 	}).addPort({
 		isTarget: true,
 		position: 'Top'
+	});
+}
+
+function AddNote() {
+	chart.addNode('Note', 50, 50, {
+		class: 'node-end',
+		data: {
+			name: 'Notes',
+			nodeType: 100,
+			desc: prompt ("Notes:")
+		}
 	});
 }

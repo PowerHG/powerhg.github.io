@@ -62,15 +62,22 @@ body {
 
 .flowchart-panel .middle {
 	flex-grow: 1;
-	position: relative;
 	margin: 0 10px;
 	padding: 10px;
+	zoom: var(--zoom);
+	--zoom: 1;
+	--left: 0px;
+	--top: 0px;
+	position: absolute;
+	left: calc(calc(200px / var(--zoom)) - calc(var(--left) / var(--zoom)));
+	top: calc(var(--top) / var(--zoom));
 }
 
 .flowchart-panel .right {
 	width: 100px;
 	padding: 10px;
-	position: relative;
+	position: absolute;
+	right: 0;
 	color: #555;
 	border-left: 1px solid #aaa;
 }

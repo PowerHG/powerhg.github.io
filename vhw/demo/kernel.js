@@ -20,7 +20,7 @@ function btn_run() {
 	}
 	$(".btn-save").click();
 	var json = JSON.parse($("#jsonOutput").val())
-	console.log('ori:', json)
+	// // console.log('ori:', json)
 
 	input = []
 	output = []
@@ -45,7 +45,7 @@ function btn_run() {
 	})
 
 	json.nodes = a;
-	console.log(a)
+	// // console.log(a)
 
 	// connection
 
@@ -135,7 +135,7 @@ function btn_run() {
 
 
 function logic(opr, li) {
-	DEBUG_time+=li.indexOf(true)==-1?0:1;
+	DEBUG_time += li.indexOf(true) == -1 ? 0 : 1;
 	if (opr == 'or') {
 		for (x in li) {
 			if (li[x]) return true;
@@ -172,7 +172,7 @@ function reRun() {
 			'in': [],
 			'out': $(ID).data().color
 		}
-		// console.log(node.id, runtime[node.id].out)
+		// // console.log(node.id, runtime[node.id].out)
 	})
 	and.forEach(node => {
 		runtime[node.id] = {
@@ -219,14 +219,14 @@ function reRun() {
 			runtime[id].out = logic('xor', runtime[id].in);
 	}
 	output.forEach(node => {
-		// console.log(node.target)
+		// // console.log(node.target)
 		runtime[node.id] = {
 			'in': Array.from(node.target),
 			'out': undefined
 		}
 		for (var i = 0; i < runtime[node.id].in.length; i++) {
 			var x = runtime[node.id].in[i];
-			// console.log(x, runtime[x].out)
+			// // console.log(x, runtime[x].out)
 			if (runtime[x].out != undefined) {
 				runtime[node.id].in[i] = runtime[x].out
 			} else {
@@ -236,7 +236,7 @@ function reRun() {
 		}
 		var ID = "#kernel_" + node.id;
 		var temp_color = (logic('or', runtime[node.id].in) ? '#FFF' : '#222')
-		// console.log(ID, $(ID))
+		// // console.log(ID, $(ID))
 		$(ID).css('backgroundColor', temp_color)
 	})
 	DEBUG_runtime = runtime;
@@ -250,5 +250,43 @@ function reRun() {
 }
 
 function MouseOver(id) {
-	$('#DEBUG_DIV').html(`<br><br><br><h3>DEBUG</h3><p>Time: ${DEBUG_time}</p><p>ID: ${id}</p><p>Output: ${DEBUG_runtime[id].out}</p><p>Input: ${DEBUG_runtime[id].in}</p>`)
+	$('#DEBUG_DIV').html(
+		`<br><br><br><h3>DEBUG</h3><p>Time: ${DEBUG_time}</p><p>ID: ${id}</p><p>Output: ${DEBUG_runtime[id].out}</p><p>Input: ${DEBUG_runtime[id].in}</p>`
+		)
+}
+
+function zoom(times) {
+	if (times)
+		return document.getElementsByClassName('middle')[0].style.setProperty("--zoom", times);
+	return document.getElementsByClassName('middle')[0].style.setProperty("--zoom", 1);
+
+}
+
+function move(s) {
+	// s : 'left,30'
+	mid = document.getElementsByClassName('middle')[0];
+	movelist = s.split(',');
+	movestep = Number(movelist[1]);
+	function getVal(str){
+		return Number(getComputedStyle(mid).getPropertyValue(str).trim().replace('px',''))
+	}
+	switch(movelist[0]){
+		case 'left':
+			mid.style.setProperty("--left", String(getVal('--left')+movestep)+"px");
+			break;
+		case 'right':
+			mid.style.setProperty("--left", String(getVal('--left')-movestep)+"px");
+			break;
+		case 'up':
+			mid.style.setProperty("--top", String(getVal('--top')-movestep)+"px");
+			break;
+		case 'down':
+			mid.style.setProperty("--top", String(getVal('--top')+movestep)+"px");
+			break;
+	}
+}
+
+function NoteEdit(This){
+	$(This).html('<input id=\'note_desc_input\' value=\''+$(This).html()+'\' onchange=\'GLOBAL_DATA_DESC.desc=$(this).val()\'>')
+	
 }
